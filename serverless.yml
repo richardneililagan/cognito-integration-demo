@@ -1,0 +1,30 @@
+service: test-cognito-integration
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+  stage: dev
+  region: ap-southeast-1
+
+  environment:
+    ping: pong
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'cognito:*'
+      Resource:
+        - '*'
+
+plugins:
+  - serverless-plugin-include-dependencies
+  - serverless-plugin-common-excludes
+
+package:
+  excludeDevDependencies: false
+  individually: true
+
+functions:
+  ping:
+    handler: src/handlers/ping.handler
