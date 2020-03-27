@@ -14,7 +14,7 @@ const userpool = new CognitoUserPool(pooldata)
 // :: ---
 
 module.exports.handler = async (event) => {
-  const { username, nonce } = JSON.parse(event.body)
+  const { username } = JSON.parse(event.body)
 
   const userdata = {
     Username: username,
@@ -24,7 +24,7 @@ module.exports.handler = async (event) => {
 
   // :: perform ---
   const task = new Promise((resolve, reject) => {
-    user.confirmRegistration(nonce, true, (err, result) => {
+    user.resendConfirmationCode((err, result) => {
       if (err)
         return reject({
           statusCode: 400,
@@ -34,7 +34,7 @@ module.exports.handler = async (event) => {
       // :: ---
       resolve({
         statusCode: 200,
-        body: `User registration confirmed: ${result}`,
+        body: `Resend request successful.`,
       })
     })
   })

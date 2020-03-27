@@ -50,6 +50,22 @@ async function main() {
       }
     })
 
+  // (3) Resend confirmation request
+  program
+    .command('resend-confirmation <username>')
+    .description('Resends registration confirmation for specified username.')
+    .action(async (username) => {
+      const { handler } = require('./handlers/resend-confirmation-code')
+      const body = JSON.stringify({ username })
+
+      try {
+        const result = await handler({ body })
+        success(result.body)
+      } catch (err) {
+        error(err.body)
+      }
+    })
+
   program.parseAsync(process.argv)
 }
 

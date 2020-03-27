@@ -46,3 +46,10 @@ functions:
       - http:
           path: users/confirm
           method: post
+
+  resend-confirmation-request:
+    handler: src/handlers/resend-confirmation-code.handler
+    events:
+      - http:
+          path: users/resend-confirmation
+          method: post
