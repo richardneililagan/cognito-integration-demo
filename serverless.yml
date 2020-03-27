@@ -53,3 +53,10 @@ functions:
       - http:
           path: users/resend-confirmation
           method: post
+
+  authenticate-user:
+    handler: src/handlers/authenticate-user.handler
+    events:
+      - http:
+          path: users/login
+          method: post

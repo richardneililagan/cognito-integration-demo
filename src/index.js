@@ -66,6 +66,22 @@ async function main() {
       }
     })
 
+  // (4) Authenticate user
+  program
+    .command('login <username> <password>')
+    .description('Authenticates a user')
+    .action(async (username, password) => {
+      const { handler } = require('./handlers/authenticate-user')
+      const body = JSON.stringify({ username, password })
+
+      try {
+        const result = await handler({ body })
+        success(result.body)
+      } catch (err) {
+        error(err.body)
+      }
+    })
+
   program.parseAsync(process.argv)
 }
 
