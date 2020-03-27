@@ -1,4 +1,4 @@
-# test-cognito-integration
+# cognito-integration-demo
 
 A collection of functions to demo how to communicate with [Amazon Cognito][1],
 also available through a CLI.
