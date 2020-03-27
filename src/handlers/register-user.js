@@ -17,41 +17,36 @@ const userpool = new CognitoUserPool(pooldata)
 // :: ---
 
 module.exports.handler = async (event) => {
-  const body = JSON.parse(event.body)
+  const { username, password, email, phone_number } = JSON.parse(event.body)
 
-  const email = new CognitoUserAttribute({
+  const emailAttribute = new CognitoUserAttribute({
     Name: 'email',
-    Value: body.email, // <--
+    Value: email,
   })
 
-  const phoneNumber = new CognitoUserAttribute({
+  const phoneNumberAttribute = new CognitoUserAttribute({
     Name: 'phone_number',
-    Value: body.phone_number, // <--
+    Value: phone_number,
   })
 
-  const attributeList = [email, phoneNumber]
+  const attributeList = [emailAttribute, phoneNumberAttribute]
 
+  // :: perform ---
   const task = new Promise((resolve, reject) => {
-    userpool.signUp(
-      body.username, // <--
-      body.password, // <--
-      attributeList,
-      null,
-      (err, result) => {
-        if (err)
-          return reject({
-            statusCode: 400,
-            body: err.message || JSON.stringify(err),
-          })
-
-        // :: ---
-        const { user } = result
-        resolve({
-          statusCode: 200,
-          body: `User ${user.getUsername()} successfully created.`,
+    userpool.signUp(username, password, attributeList, null, (err, result) => {
+      if (err)
+        return reject({
+          statusCode: 400,
+          body: err.message || JSON.stringify(err),
         })
-      }
-    )
+
+      // :: ---
+      const { user } = result
+      resolve({
+        statusCode: 200,
+        body: `User ${user.getUsername()} successfully created.`,
+      })
+    })
   })
 
   return task

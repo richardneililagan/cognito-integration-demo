@@ -28,3 +28,21 @@ package:
 functions:
   ping:
     handler: src/handlers/ping.handler
+    events:
+      - http:
+          path: ping
+          method: get
+
+  register-user:
+    handler: src/handlers/register-user.handler
+    events:
+      - http:
+          path: users/register
+          method: post
+
+  confirm-user:
+    handler: src/handlers/confirm-registration.handler
+    events:
+      - http:
+          path: users/confirm
+          method: post
