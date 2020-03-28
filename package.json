@@ -9,7 +9,12 @@
   "scripts": {
     "build": "serverless package"
   },
-  "keywords": ["aws", "cognito", "cli", "serverless"],
+  "keywords": [
+    "aws",
+    "cognito",
+    "cli",
+    "serverless"
+  ],
   "author": "Richard Neil Ilagan <705310+richardneililagan@users.noreply.github.com>",
   "license": "MIT",
   "devDependencies": {
@@ -24,6 +29,7 @@
     "chalk": "3.0.0",
     "commander": "5.0.0",
     "cross-fetch": "3.0.4",
-    "dotenv": "8.2.0"
+    "dotenv": "8.2.0",
+    "inquirer": "7.1.0"
   }
 }
