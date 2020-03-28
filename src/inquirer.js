@@ -1,10 +1,24 @@
+require('dotenv').config()
+
 const inquirer = require('inquirer')
-const { log, info } = require('./helpers/logging')
+const { log, info, warn, debug } = require('./helpers/logging')
+const { isLoggedIn, isFederated, getUser } = require('./state')
 
 // :: ---
 
+const __separator = {
+  prompt: new inquirer.Separator(),
+  isAvailable: () => true,
+  handler: () => {},
+}
+
 const CHOICE_MAP = [
+  require('./question-handlers/authenticate-cognito-user'),
+  require('./question-handlers/federate-to-aws'),
+  __separator,
   require('./question-handlers/register-user'),
+  require('./question-handlers/confirm-registration'),
+  require('./question-handlers/resend-confirmation'),
   {
     prompt: 'Exit',
     isAvailable: () => true,
@@ -24,13 +38,31 @@ function getAvailableChoices() {
   return choices.filter((choice) => choice !== null)
 }
 
-async function ask() {
-  const availableChoices = getAvailableChoices()
+function blurb() {
+  if (isLoggedIn()) {
+    info(`Current logged in user: ${getUser().username}`)
+  } else {
+    warn('No logged in user.')
+  }
 
+  if (isFederated()) {
+    info('Federated to the AWS SDK.')
+  } else {
+    warn('Not federated to the AWS SDK.')
+  }
+
+  log()
+}
+
+async function ask() {
   while (true) {
+    blurb()
+
+    const availableChoices = getAvailableChoices()
+
     const { operation } = await inquirer.prompt([
       {
-        type: 'list',
+        type: 'rawlist',
         name: 'operation',
         message: 'Select an operation:',
         choices: () => availableChoices.map(({ prompt }) => prompt),
@@ -49,4 +81,5 @@ async function ask() {
   }
 }
 
+console.clear()
 ask()

@@ -10,7 +10,18 @@ const __output = (theme) => {
 
 module.exports.debug = __output(chalk.grey)
 module.exports.log = __output(chalk.white)
-module.exports.info = __output(chalk.cyan)
-module.exports.success = __output(chalk.greenBright)
+module.exports.info = __output(chalk.inverse.magentaBright)
 module.exports.warn = __output(chalk.yellowBright)
-module.exports.error = __output(chalk.redBright)
+
+const __success = __output(chalk.greenBright)
+const __error = __output(chalk.redBright)
+
+module.exports.success = (...messages) => {
+  console.clear()
+  __success(...messages)
+}
+
+module.exports.error = (...messages) => {
+  console.clear()
+  __error(...messages)
+}
