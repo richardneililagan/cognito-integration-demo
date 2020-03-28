@@ -1,4 +1,5 @@
 const inquirer = require('inquirer')
+const { log, success, error } = require('../helpers/logging')
 
 // :: ---
 
@@ -44,7 +45,18 @@ const prompt = 'Register a new Cognito user'
 
 const isAvailable = () => true
 
-const handler = async () => await inquirer.prompt(questions)
+const handler = async () => {
+  const answers = await inquirer.prompt(questions)
+  const { handler } = require('../handlers/register-user')
+  const body = JSON.stringify(answers)
+
+  try {
+    const result = await handler({ body })
+    success(result.body)
+  } catch (err) {
+    error(err.body)
+  }
+}
 
 // :: ---
 

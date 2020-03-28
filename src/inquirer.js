@@ -1,8 +1,16 @@
 const inquirer = require('inquirer')
+const { log, info } = require('./helpers/logging')
 
 // :: ---
 
-const CHOICE_MAP = [require('./question-handlers/register-user')]
+const CHOICE_MAP = [
+  require('./question-handlers/register-user'),
+  {
+    prompt: 'Exit',
+    isAvailable: () => true,
+    handler: () => process.exit(0),
+  },
+]
 
 // :: ---
 
@@ -19,20 +27,26 @@ function getAvailableChoices() {
 async function ask() {
   const availableChoices = getAvailableChoices()
 
-  const { operation } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'operation',
-      message: 'Select an operation:',
-      choices: () => availableChoices.map(({ prompt }) => prompt),
-    },
-  ])
+  while (true) {
+    const { operation } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'operation',
+        message: 'Select an operation:',
+        choices: () => availableChoices.map(({ prompt }) => prompt),
+      },
+    ])
 
-  const { handler } = availableChoices.filter(
-    ({ prompt }) => prompt === operation
-  )[0]
+    log()
 
-  await handler()
+    const { handler } = availableChoices.filter(
+      ({ prompt }) => prompt === operation
+    )[0]
+
+    await handler()
+
+    log()
+  }
 }
 
 ask()
