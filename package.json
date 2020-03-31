@@ -27,7 +27,6 @@
     "amazon-cognito-identity-js": "3.2.6",
     "aws-sdk": "2.646.0",
     "chalk": "3.0.0",
-    "commander": "5.0.0",
     "cross-fetch": "3.0.4",
     "dotenv": "8.2.0",
     "inquirer": "7.1.0"

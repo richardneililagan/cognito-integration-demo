@@ -1,88 +1,87 @@
 #!/usr/bin/env node
 
-const { program } = require('commander')
-const { version } = require('../package.json')
+require('dotenv').config()
 
-const { log, success, error } = require('./helpers/logging')
+const inquirer = require('inquirer')
+const { log, info, warn, debug } = require('./helpers/logging')
+const { isLoggedIn, isFederated, getUser } = require('./state')
 
 // :: ---
 
-async function main() {
-  program.version(version)
-
-  // (1) Register a new user
-  program
-    .command('register-user <username> <password> <email> <phone_number>')
-    .description('Creates a new Cognito user.')
-    .action(async (username, password, email, phone_number) => {
-      const { handler } = require('./handlers/register-user')
-      const body = JSON.stringify({
-        username,
-        password,
-        email,
-        phone_number,
-      })
-
-      try {
-        const result = await handler({ body })
-        success(result.body)
-      } catch (err) {
-        error(err.body)
-      }
-    })
-
-  // (2) Confirm user registration
-  program
-    .command('confirm-user <username> <nonce>')
-    .description('Confirms user registration using the confirmation code.')
-    .action(async (username, nonce) => {
-      const { handler } = require('./handlers/confirm-registration')
-      const body = JSON.stringify({
-        username,
-        nonce,
-      })
-
-      try {
-        const result = await handler({ body })
-        success(result.body)
-      } catch (err) {
-        error(err.body)
-      }
-    })
-
-  // (3) Resend confirmation request
-  program
-    .command('resend-confirmation <username>')
-    .description('Resends registration confirmation for specified username.')
-    .action(async (username) => {
-      const { handler } = require('./handlers/resend-confirmation-code')
-      const body = JSON.stringify({ username })
-
-      try {
-        const result = await handler({ body })
-        success(result.body)
-      } catch (err) {
-        error(err.body)
-      }
-    })
-
-  // (4) Authenticate user
-  program
-    .command('login <username> <password>')
-    .description('Authenticates a user')
-    .action(async (username, password) => {
-      const { handler } = require('./handlers/authenticate-user')
-      const body = JSON.stringify({ username, password })
-
-      try {
-        const result = await handler({ body })
-        success(result.body)
-      } catch (err) {
-        error(err.body)
-      }
-    })
-
-  program.parseAsync(process.argv)
+const __separator = {
+  prompt: new inquirer.Separator(),
+  isAvailable: () => true,
+  handler: () => {},
 }
 
-main()
+const CHOICE_MAP = [
+  require('./question-handlers/authenticate-cognito-user'),
+  require('./question-handlers/federate-to-aws'),
+  __separator,
+  require('./question-handlers/register-user'),
+  require('./question-handlers/confirm-registration'),
+  require('./question-handlers/resend-confirmation'),
+  {
+    prompt: 'Exit',
+    isAvailable: () => true,
+    handler: () => process.exit(0),
+  },
+]
+
+// :: ---
+
+function __choice({ prompt, handler, isAvailable }) {
+  return isAvailable() ? { prompt, handler } : null
+}
+
+function getAvailableChoices() {
+  const choices = CHOICE_MAP.map(__choice)
+
+  return choices.filter((choice) => choice !== null)
+}
+
+function blurb() {
+  if (isLoggedIn()) {
+    info(`Current logged in user: ${getUser().username}`)
+  } else {
+    warn('No logged in user.')
+  }
+
+  if (isFederated()) {
+    info('Federated to the AWS SDK.')
+  } else {
+    warn('Not federated to the AWS SDK.')
+  }
+
+  log()
+}
+
+async function ask() {
+  while (true) {
+    blurb()
+
+    const availableChoices = getAvailableChoices()
+
+    const { operation } = await inquirer.prompt([
+      {
+        type: 'rawlist',
+        name: 'operation',
+        message: 'Select an operation:',
+        choices: () => availableChoices.map(({ prompt }) => prompt),
+      },
+    ])
+
+    log()
+
+    const { handler } = availableChoices.filter(
+      ({ prompt }) => prompt === operation
+    )[0]
+
+    await handler()
+
+    log()
+  }
+}
+
+console.clear()
+ask()
