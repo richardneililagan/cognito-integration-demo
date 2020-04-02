@@ -1,7 +1,7 @@
 const inquirer = require('inquirer')
 const { success, error } = require('../helpers/logging')
 
-const { isLoggedIn, isFederated } = require('../state')
+const { isFederated } = require('../state')
 
 // :: ---
 
@@ -9,23 +9,23 @@ const questions = [
   {
     name: 'confirm',
     type: 'confirm',
-    message: 'Federate current logged in user to AWS?',
+    message: 'Refresh current session?',
     default: false,
   },
 ]
 
 // :: ---
 
-const prompt = 'Federate logged in user to AWS.'
+const prompt = 'Refresh current session.'
 
-const isAvailable = () => isLoggedIn() && !isFederated()
+const isAvailable = isFederated
 
 const handler = async () => {
   const { confirm } = await inquirer.prompt(questions)
   if (!confirm) return
 
   // :: ---
-  const { handler } = require('../handlers/federate-to-aws')
+  const { handler } = require('../handlers/refresh-session')
 
   try {
     const result = await handler()
@@ -34,7 +34,5 @@ const handler = async () => {
     error(err.body || err)
   }
 }
-
-// :: ---
 
 module.exports = { prompt, handler, isAvailable }

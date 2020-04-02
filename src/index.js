@@ -17,6 +17,7 @@ const __separator = {
 const CHOICE_MAP = [
   require('./question-handlers/authenticate-cognito-user'),
   require('./question-handlers/federate-to-aws'),
+  require('./question-handlers/refresh-session'),
   __separator,
   require('./question-handlers/register-user'),
   require('./question-handlers/confirm-registration'),
