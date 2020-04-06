@@ -1,15 +1,30 @@
 # cognito-integration-demo
 
-A collection of functions to demo how to communicate with [Amazon Cognito][1],
-also available through a CLI.
+A collection of functions that demonstrate how to communicate with [Amazon Cognito][1],
+meant to be a proof-of-concept (POC) and/or a simple reference.
 
-Functions are also packaged to be deployable as [AWS Lambda][2] functions
-using the [Serverless Framework][3].
+As part of the POC, this package includes a CLI client that consumes the functions above.
+The package also comes with a manifest for the [Serverless Framework][3], so you can deploy the functions
+as a set of HTTPS API endpoints behind an [Amazon API Gateway][6].
 
 The demo snippets are largely adapted versions of the snippets provided by [`amazon-cognito-identity-js`][4],
 which this codebase uses.
 
+## About
+
+The functions that demonstrate Cognito functionality are all stored in the `src/handlers/` folder.
+Everything else is mostly just to build the CLI and/or Serverless Framework functionality around it.
+
+If you're only interested in checking out how to talk to Cognito from your code,
+then all you'll need are the files in `src/handlers/`. They're written in such a way so that
+the logic in each handler is pretty much self-supporting, with not much dependencies between each other. (Ultimately, this means that the code can be made better in real use-case environments.)
+
+---
+
 ## Installation
+
+If you want to try out the CLI for yourself, you can just clone this repository and run `npm link` to make
+the CLI tool available on your `PATH`, or you can install the release package directly from `npm`:
 
 ```
 npm install -g @richardneililagan/cognito-integration-demo
@@ -27,16 +42,17 @@ The package will look for the following environment variables:
 
 ## Usage
 
-The CLI is available through `cognito` if installed globally via `npm`.
-Run `cognito help` for more info on the operations.
-
-e.g.
+The CLI is available through the `cognito` command if installed globally via `npm` or the codebase is made available
+using `npm link`.
 
 ```
-cognito register-user myuser hunter2 no-reply@domain.com +6512345678
+cognito
 ```
 
-The actual logic is found in the `src/handlers/` directory.
+The available CLI options change depending on the CLI state.
+(E.g. if you're logged in or not.)
+
+Again, the actual logic is found in the `src/handlers/` directory.
 I've done my best to make sure the functions are as autonomous as possible from each other,
 so that the actual flow across each one is (hopefully) clearer.
 
@@ -58,3 +74,4 @@ MIT
 [3]: https://serverless.com
 [4]: https://www.npmjs.com/package/amazon-cognito-identity-js
 [5]: https://twitter.com/techlifemusic
+[6]: https://aws.amazon.com/api-gateway
