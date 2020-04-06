@@ -1,7 +1,7 @@
 {
   "name": "@richardneililagan/cognito-integration-demo",
-  "version": "1.1.0",
-  "description": "",
+  "version": "1.1.1",
+  "description": "Sample snippets for integrating to Amazon Cognito.",
   "main": "index.js",
   "bin": {
     "cognito": "src/index.js"
@@ -15,6 +15,11 @@
     "cli",
     "serverless"
   ],
+  "homepage": "https://github.com/richardneililagan/cognito-integration-demo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/richardneililagan/cognito-integration-demo.git"
+  },
   "author": "Richard Neil Ilagan <705310+richardneililagan@users.noreply.github.com>",
   "license": "MIT",
   "devDependencies": {
