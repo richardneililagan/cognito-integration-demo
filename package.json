@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "amazon-cognito-identity-js": "3.2.6",
-    "aws-sdk": "2.646.0",
+    "aws-sdk": "2.814.0",
     "chalk": "3.0.0",
     "cross-fetch": "3.0.4",
     "dotenv": "8.2.0",
